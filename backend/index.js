@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const database = require('./config');
 const user = require('./routes/user');
+const appointment = require('./routes/appointment');
 dotenv.config();
 
 app.use(cors());
@@ -12,6 +13,8 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/user', user);
+
+app.use('/appointment', appointment);
 
 // Connect to MongoDB
 
