@@ -1,13 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jwt');
-const user = require('../model/User');
+const jwt = require('jsonwebtoken');
+const User = require('../model/User');
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
     const {username, email, password} = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
-    const newUser = new user({
+    const newUser = new User({
         username,
         email,
         password: hashedPassword
@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
         await newUser.save();
         res.send("User registered successfully");
     } catch (error) {
-        res.status(400).send("Registration failed");
+        res.status(400).json({error});
     }
 }
 );

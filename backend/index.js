@@ -4,10 +4,14 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const database = require('./config');
+const user = require('./routes/user');
 dotenv.config();
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// Routes
+app.use('/user', user);
 
 // Connect to MongoDB
 
