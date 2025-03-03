@@ -23,7 +23,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     const {email, password} = req.body;
-    const currentUser = await user.findOne({email});
+    const currentUser = await User.findOne({email});
     if (!currentUser) {
         return res.status(400).send("Email not found");
     }
