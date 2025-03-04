@@ -1,12 +1,18 @@
 const express = require('express');
 const Appointment = require('../model/Appointment');
 const router = express.Router();
+const authenticate = require('../middleware/auth');
 
-router.post("/create", async (req, res) => {
-    const {user, date, description} = req.body;
+router.post("/create",authenticate, async (req, res) => {
+    const {startDate, endDate, description} = req.body;
+    const user = req.user.id;
+
+    console.log(req.user);
+    
     const newAppointment = new Appointment({
         user,
-        date,
+        startDate,
+        endDate,
         description
     });
     try {
@@ -18,7 +24,7 @@ router.post("/create", async (req, res) => {
 }
 );
 
-router.get("/:userId", async (req, res) => {
+router.get("/:userId",authenticate, async (req, res) => {
     const userId = req.params.userId;
     const appointments = await Appointment.find({user: userId});
     res.json(appointments);
