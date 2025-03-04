@@ -24,10 +24,17 @@ router.post("/create",authenticate, async (req, res) => {
 }
 );
 
-router.get("/:userId",authenticate, async (req, res) => {
-    const userId = req.params.userId;
-    const appointments = await Appointment.find({user: userId});
-    res.json(appointments);
+router.get("/user",authenticate, async (req, res) => {
+    const user = req.user.id;
+    try{
+
+    const appointments = await Appointment.find({user: user});
+    console.log(`Found appointments: ${appointments}`);
+    res.status(200).json(appointments);
+} catch (error) {
+    res.status(400).json({error});
+    console.log(error);
+}
 }
 );
 
