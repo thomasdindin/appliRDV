@@ -20,7 +20,6 @@
             <div class="modal-body">
               <p><strong>Titre:</strong> {{ selectedEvent.title }}</p>
               <p><strong>Date:</strong> {{ formatDate(selectedEvent.start) }}</p>
-              <p><strong>description:</strong> {{ selectedEvent.duration }} minutes</p>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" @click="selectedEvent = null">Fermer</button>
@@ -52,6 +51,7 @@
       appointments.value = response.data.map((appt) => ({
         description: appt.description,
         start: new Date(appt.startDate),
+        _eid: appt._id,
         end: new Date(appt.endDate)
       } 
     ));

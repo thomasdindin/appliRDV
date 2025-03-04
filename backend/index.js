@@ -7,6 +7,7 @@ const database = require('./config');
 const user = require('./routes/user');
 const appointment = require('./routes/appointment');
 dotenv.config();
+require('./cronTache.js');
 
 app.use(cors());
 app.use(bodyParser.json());

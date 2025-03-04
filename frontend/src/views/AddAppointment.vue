@@ -10,7 +10,7 @@ const endDate = ref('');
 const add = async () => {
     const token = localStorage.getItem('token');
 
-
+if (new Date(startDate) > new Date(endDate)) {
     try {
         const response = await axios.post('http://localhost:3000/appointment/create', {
             description: description.value,
@@ -27,7 +27,12 @@ const add = async () => {
         console.error(error);
     }
     
-    
+   {
+	alert("Start date should be less than end date");
+	return false;
+} 
+}
+
         
 }
 </script>
