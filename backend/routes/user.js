@@ -1,15 +1,15 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../model/User');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 
 router.post("/register", async (req, res) => {
     const {username, email, password} = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
     const newUser = new User({
-        username,
-        email,
+        username : username,
+        email : email,
         password: hashedPassword
     });
     try {
@@ -33,8 +33,6 @@ router.post("/login", async (req, res) => {
     }
     const token = jwt.sign({id: currentUser._id, username: currentUser.username}, process.env.SECRET);
     res.json({token});
-
-
 }
 );
 

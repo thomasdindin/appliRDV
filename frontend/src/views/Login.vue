@@ -1,31 +1,27 @@
-
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import {useAuthStore} from "@/stores/authStore.js";
+import api from "@/services/api.js";
+import router from "@/router/index.js";
 
 const email = ref('');
 const password = ref('');
 
-
+const authStore = useAuthStore();
 
 const login = async () => {
     try {
-        const response = await axios.post('http://localhost:3000/user/login', {
+        const response = await api.post('user/login', {
             email: email.value,
             password: password.value
         });
-        console.log(response.data);
-        console.log("ok");
-        localStorage.setItem('token', response.data.token);
+        authStore.setToken(response.data.token);
+
+        await router.push({name: 'Home'});
     } catch (error) {
         console.error(error);
     }
-    
-    
-        
 }
-
-
 </script>
 
 <template>
