@@ -24,6 +24,7 @@ export const useAuthStore = defineStore(
         const username = ref<string | null>(null)
         const email = ref<string | null>(null)
         const token = ref<string | null>(null)
+        const role = ref<string | null>(null)
 
         const setToken = (newToken: string | null) => {
             token.value = newToken;
@@ -31,29 +32,30 @@ export const useAuthStore = defineStore(
             const decodedToken = parseJwt(newToken);
             username.value = decodedToken.username;
             email.value = decodedToken.email;
+            role.value = decodedToken.role;
         };
 
         const isLoggedIn = computed(() => token.value !== null && token.value !== undefined);
+        const isAdmin = computed(() => role.value === 'admin');
 
         const logout = () => {
             token.value = null;
             username.value = null;
             email.value = null;
+            role.value = null;
         }
 
         return {
             token,
             username,
             email,
+            role,
             setToken,
             logout,
             isLoggedIn,
+            isAdmin
         };
     }, {
         persist: true,
     }
 )
-
-if (import.meta.webpackHot) {
-    import.meta.hot.accept(acceptHMRUpdate(useAuth, import.meta.webpackHot))
-}

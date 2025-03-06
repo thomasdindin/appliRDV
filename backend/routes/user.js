@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
     if (!passwordMatch) {
         return res.status(400).send("Invalid password");
     }
-    const token = jwt.sign({id: currentUser._id, username: currentUser.username}, process.env.SECRET);
+    const token = jwt.sign({id: currentUser._id, username: currentUser.username, email: currentUser.email, role: currentUser.role}, process.env.SECRET);
     res.json({token});
 }
 );

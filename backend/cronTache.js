@@ -1,42 +1,35 @@
+// cronJobs.js
+require('dotenv').config(); // charger les variables d'environnement
 const cron = require('node-cron');
-const appointment = require('./model/Appointment');
-const mongoose = require('mongoose');
-const user = require('./model/User');
-const sendEmail = require('./mail');
-require('dotenv').config();
+const { getBookingsForToday } = require('./services/bookingsService'); // adaptez le chemin si nécessaire
+const sendEmail = require('./mail'); // module d'envoi d'email
 
-
- cron.schedule('*/10 * * * * *', async () => {
+// Planifier le cron job pour 8h00 chaque jour (minute 0, heure 8, tous les jours)
+cron.schedule('0 8 * * *', async () => {
+    console.log("Début du cron job d'envoi de rappels à 8h00");
 
     try {
+        // Récupérer les réservations d'aujourd'hui
+        const bookings = await getBookingsForToday();
+        console.log("Réservations pour aujourd'hui:", bookings);
 
-    const lists = await appointment.find({startDate:{
-        $gte: new Date(new Date().setHours(0, 0, 0)),
-        $lt: new Date(new Date().setHours(23, 59, 59))
-    } }).populate('user');
+        for (const booking of bookings) {
+            if (booking.user && booking.user.email) {
+                // Créer le contenu de l'email
+                const subject = "🔔 Rappel de votre réservation";
+                const htmlContent = `
+          <h1>Bonjour ${booking.user.username},</h1>
+          <p>Ceci est un rappel pour votre réservation prévue le <strong>${new Date(booking.date).toLocaleString('fr-FR')}</strong>.</p>
+          <p>Merci et à bientôt !</p>
+        `;
 
-
-
-    console.log('List', lists);
-
-    for (const list of lists) {
-        if (list.user && list.user.email) {
-            // Contenu du rappel
-            const subject = "🔔 Rappel de votre rendez-vous";
-            const htmlContent = `
-                <h1>Bonjour ${list.user.username},</h1>
-                <p>Ceci est un rappel pour votre rendez-vous prévu le <strong>${list.startDate}</strong>.</p>
-                <p>Merci et à bientôt !</p>
-            `;
-
-            // Envoi de l'email
-            await sendEmail(list.user.email, subject, htmlContent);
-            console.log(`📩 Email envoyé à ${list.user.email} pour le rendez-vous du ${list.startDate}`);
+                // Envoyer l'email
+                await sendEmail(booking.user.email, subject, htmlContent);
+                console.log(`📩 Email envoyé à ${booking.user.email} pour la réservation du ${booking.date}`);
+            }
         }
+    } catch (error) {
+        console.error("❌ Erreur lors de l'envoi des rappels :", error);
     }
-
-} catch (error) {
-    console.error("❌ Erreur lors de l'envoi des rappels :", error);
-}
-    console.log('Running Cron Job');
+    console.log("Cron job terminé");
 });
